@@ -79,6 +79,8 @@ module Hedgehog.Internal.Property (
   , evalEither
   , evalEitherM
   , evalExceptT
+  , evalHead
+  , evalHeadM
   , evalMaybe
   , evalMaybeM
 
@@ -163,6 +165,7 @@ import           Data.Functor.Identity (Identity(..))
 import           Data.Int (Int64)
 import           Data.Map (Map)
 import qualified Data.Map.Strict as Map
+import           Data.Monoid (First(..))
 import           Data.Number.Erf (invnormcdf)
 import qualified Data.List as List
 import           Data.String (IsString)
@@ -847,6 +850,20 @@ evalEitherM =
 evalExceptT :: (MonadTest m, Show x, HasCallStack) => ExceptT x m a -> m a
 evalExceptT m =
   withFrozenCallStack evalEither =<< runExceptT m
+
+-- | Fails the test if the 'Foldable' container is empty, otherwise
+--   returns the first element.
+evalHead :: (MonadTest m, Show a, Foldable f, HasCallStack) => f a -> m a
+evalHead =
+  eval' . getFirst . foldMap (First . Just)
+  where eval' Nothing = withFrozenCallStack $ failWith Nothing "The foldable container was empty."
+        eval' (Just x) = pure x
+
+-- | Fails the test if the action throws an exception, or if the
+--   'Foldable' is empty.  Otherwise returns the first element.
+evalHeadM :: (MonadTest m, Show a, MonadCatch m, Foldable f, HasCallStack) => m (f a) -> m a
+evalHeadM =
+  evalHead <=< evalM
 
 -- | Fails the test if the 'Maybe' is 'Nothing', otherwise returns the value in
 --   the 'Just'.

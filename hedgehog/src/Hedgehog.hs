@@ -114,6 +114,8 @@ module Hedgehog (
   , evalEither
   , evalEitherM
   , evalExceptT
+  , evalHead
+  , evalHeadM
   , evalMaybe
   , evalMaybeM
 
@@ -169,7 +171,7 @@ import           Hedgehog.Internal.Property (classify, cover)
 import           Hedgehog.Internal.Property (discard, failure, success)
 import           Hedgehog.Internal.Property (DiscardLimit, withDiscards)
 import           Hedgehog.Internal.Property (eval, evalNF, evalM, evalIO)
-import           Hedgehog.Internal.Property (evalEither, evalEitherM, evalExceptT, evalMaybe, evalMaybeM)
+import           Hedgehog.Internal.Property (evalEither, evalEitherM, evalExceptT, evalHead, evalHeadM, evalMaybe, evalMaybeM)
 import           Hedgehog.Internal.Property (footnote, footnoteShow)
 import           Hedgehog.Internal.Property (forAll, forAllWith)
 import           Hedgehog.Internal.Property (LabelName, MonadTest(..))
